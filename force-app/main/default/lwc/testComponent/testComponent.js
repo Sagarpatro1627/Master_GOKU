@@ -1,4 +1,4 @@
-import { LightningElement, api, wire } from 'lwc';
+import { LightningElement, api, track } from 'lwc';
 import { getRecord } from 'lightning/uiRecordApi';
 import { APPLICATION_SCOPE, createMessageContext, MessageContext, publish, releaseMessageContext, subscribe, unsubscribe } from 'lightning/messageService';
 import BOATMC from '@salesforce/messageChannel/BoatMessageChannel__c';
@@ -9,6 +9,7 @@ const BOAT_FIELDS = [LONGITUDE_FIELD, LATITUDE_FIELD];
 export default class TestComponent extends LightningElement {
   subscription = null;
   @api boatId;
+  @track recordid;
 
   @api get recordId() {
     return this.boatId;
