@@ -3,6 +3,7 @@ public with sharing class newTestClass {
 
     }
     public static void main(){
-        System.debug('hello world to my git hub')
+        System.debug('hello world to my git hub');
+        System.debug('Hiiiii');
     }
 }
