@@ -1,0 +1,2 @@
+<apex:page standardController="Lead" extensions="RESTApiController" action="{!callUpdateLead}">
+</apex:page>

@@ -1,0 +1,159 @@
+<template>
+   <div>
+      <lightning-card title="Search Contacts..." icon-name="custom:custom14">
+         <div class="slds-m-around_medium">
+          <div class="slds-clearfix">
+             <!--lightning-button icon-name="utility:record_create" label="Add new contact" class="slds-float_right slds-float_top" onclick={callAddNewRecord} ></lightning-button-->
+             <lightning-button icon-name="utility:record_create" label="Add new contact" class="slds-float_right slds-float_top" onclick={openAddModal} ></lightning-button>
+          </div>
+             <Lightning-input id="inputText" type="Search" onchange={handleKeyChange} placeholder="Search..." class="slds-m-bottom_small" value={contactName}>
+             </Lightning-input>
+             <lightning-button type="Button" label="Search" onclick={handleButtonClick} variant="brand"></lightning-button>
+             <div>
+                <!--Table header declaraions-->
+                 <table if:true={contactList} class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-top_small">
+                     <thead>
+                        <tr class="slds-line-height_reset">
+                           <th class="" scope="col">
+                             <div class="slds-truncate" title="Action">Action</div>
+                          </th>
+                           <th class="" scope="col">
+                             <div class="slds-truncate" title="Name">Name</div>
+                          </th>
+                           <th class="" scope="col">
+                              <div class="slds-truncate" title="Phone">Phone</div>
+                           </th>
+                           <th class="" scope="col">
+                              <div class="slds-truncate" title="Email">Email</div>
+                           </th>
+                           <th class="" scope="col">
+                             <div class="slds-truncate" title="State">Mailing State</div>
+                          </th>
+                          <th class="" scope="col">
+                             <div class="slds-truncate" title="City">Mailing City</div>
+                          </th>
+                        </tr>
+                     </thead>
+                     <tbody> 
+                        <!--table rows declaration-->  
+                        <template for:each={contactList} for:item="contactObj" for:index="index">
+                           <tr class="slds-hint-parent" key={contactObj.Id}>
+                              <td>
+                                 <lightning-button icon-name="utility:preview" value={contactObj.Id} class="slds-m-left_x-small" onclick={callRowView}  ></lightning-button>
+                                 <lightning-button icon-name="utility:edit" value={contactObj.Id} class="slds-m-left_x-small" onclick={openEditModal}  ></lightning-button>
+                                 
+                                 <lightning-button icon-name="utility:record_delete" value={contactObj.Id} class="slds-m-left_x-small" onclick={openModal}></lightning-button>
+                                 
+                              </td>
+                              <td>
+                                 <div class="slds-truncate">{contactObj.Name}</div>
+                              </td>
+                              <td>
+                                 <div class="slds-truncate">
+                                    <lightning-formatted-phone value={contactObj.Phone} ></lightning-formatted-phone>
+                                 </div>
+                              </td>
+                              <td>
+                                 <div class="slds-truncate">
+                                    <lightning-formatted-email value={contactObj.Email} ></lightning-formatted-email>
+                                 </div>
+                              </td>
+                              <td>
+                                 <div class="slds-truncate">{contactObj.MailingState}</div>
+                              </td>
+                              <td>
+                                 <div class="slds-truncate">{contactObj.MailingCity}</div>
+                              </td>
+                           </tr>
+                        </template>
+                     </tbody>
+                  </table>
+             </div>
+         </div>
+     </lightning-card>
+   </div>
+   <!-- modal popup for rhe delete buton confirmation-->
+   <template if:true={isModalOpen}>
+      <!-- Modal/Popup Box LWC starts here -->
+      <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+          <div class="slds-modal__container">
+              <!-- Modal/Popup Box LWC header here -->
+              <header class="slds-modal__header">
+                  <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
+                      <lightning-icon icon-name="utility:close"
+                          alternative-text="close"
+                          variant="inverse"
+                          size="small" ></lightning-icon>
+                      <span class="slds-assistive-text">Close</span>
+                  </button>
+                  <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Delete Contact</h2>
+              </header>
+              <!-- Modal/Popup Box LWC body starts here -->
+              <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                  <p style="text-align: center;">Are you sure you want to delete this contact?</p>
+              </div>
+              <!-- Modal/Popup Box LWC footer starts here -->
+              <footer class="slds-modal__footer">
+                  <button class="slds-button slds-button_neutral" onclick={closeModal} title="Cancel">Cancel</button>
+                  <button class="slds-button slds-button_brand" onclick={submitDetails} title="OK">Sure</button>
+              </footer>
+          </div>
+      </section>
+      <div class="slds-backdrop slds-backdrop_open"></div>
+  </template>
+  <!--modal popup for the add button clicks-->
+  <template if:true={isAddOpen}>
+      <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+         <div class="slds-modal__container">
+            <!-- Modal/Popup Box LWC header here -->
+            <header class="slds-modal__header">
+               <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeAddModal}>
+                     <lightning-icon icon-name="utility:close"
+                        alternative-text="close"
+                        variant="inverse"
+                        size="small" ></lightning-icon>
+                     <span class="slds-assistive-text">Close</span>
+               </button>
+               <h2 id="modal-heading-02" class="slds-text-heading_medium slds-hyphenate">Add New Contact</h2>
+            </header>
+            <!-- Modal/Popup Box LWC body starts here -->
+            <div class="slds-modal__content slds-p-around_medium">
+               <lightning-record-form 
+               object-api-name={objectApiName}
+               fields={fields}
+               onsuccess={handleAddSuccess}>
+            </lightning-record-form>
+            </div>
+         </div>
+    </section> 
+    <div class="slds-backdrop slds-backdrop_open"></div>  
+   </template>
+   <!-- modal popup for the edit button click-->
+   <template if:true={isEditOpen}>
+      <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+         <div class="slds-modal__container">
+            <!-- Modal/Popup Box LWC header here -->
+            <header class="slds-modal__header">
+               <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeEditModal}>
+                     <lightning-icon icon-name="utility:close"
+                        alternative-text="close"
+                        variant="inverse"
+                        size="small" ></lightning-icon>
+                     <span class="slds-assistive-text">Close</span>
+               </button>
+               <h2 id="modal-heading-03" class="slds-text-heading_medium slds-hyphenate">Edit Contact</h2>
+            </header>
+            <!-- Modal/Popup Box LWC body starts here -->
+            <div class="slds-modal__content slds-p-around_medium">
+                  <lightning-record-form 
+                     object-api-name={objectApiName} 
+                     record-id={recordId}
+                     onsuccess={handleEditSuccess}
+                     fields={fields}>
+                  </lightning-record-form>
+            </div>
+         </div>
+    </section> 
+    <div class="slds-backdrop slds-backdrop_open"></div>  
+   </template>
+</template>

@@ -1,0 +1,44 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" controller="ContactCardComponentController">
+	<aura:attribute name="ContactList" type="Contact[]"/>
+	<aura:attribute name="recordId" type="Id"/>
+	<aura:attribute name="columns" type="List"/>
+	<aura:attribute name="UpdatedList" type="Contact[]"/>    
+    <aura:handler name="init" value="{!this}" action="{!c.myAction}" />
+     <lightning:card iconName="standard:work_capacity_usage" title="Related Contacts">
+        <aura:if isTrue="{!not(empty(v.ContactList))}">
+            <!--table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th class="slds-text-title_caps" scope="col">
+                            <div class="slds-truncate" title="First Name">FirstName</div>
+                        </th>
+                        <th class="slds-text-title_caps" scope="col">
+                            <div class="slds-truncate" title="last Name">LastName</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration  items="{!v.ContactList}" var="con">
+                        <tr class="slds-hint-parent">
+                            <td data-label="File Name">
+                                <div class="slds-truncate" title="File Name">{!con.FirstName}</div>  
+                            </td>
+                            <td data-label="File Name">
+                                <div class="slds-truncate" title="File Name">{!con.LastName}</div>  
+                            </td>
+                        </tr>
+                    </aura:iteration>
+                </tbody>
+            </table-->
+            <lightning:datatable data="{!v.ContactList }" 
+                         columns="{!v.columns }" 
+                         keyField="Id"
+						 draftValues= "{!v.UpdatedList}"
+                         onsave="{!c.SaveUpdatedContacts}"
+                         hideCheckboxColumn="true"/>
+            <aura:set attribute="else">
+                <div Style="text-align : center"> " There are no related contacts "</div>
+            </aura:set>
+        </aura:if>
+    </lightning:card>
+</aura:component>
