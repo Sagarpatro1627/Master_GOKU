@@ -36,20 +36,6 @@ export default class TestComponent extends LightningElement {
     }
   }
 
-  @wire(MessageContext)
-  messageContext;
-
-
-  // Runs when component is connected, subscribes to BoatMC
-  connectedCallback() {
-    // recordId is populated on Record Pages, and this component
-    // should not update when this component is on a record page.
-    if (this.subscription || this.recordId) {
-      return;
-    }
-    // Subscribe to the message channel to retrieve the recordID and assign it to boatId.
-    this.subscribeMC();
-  }
 
   subscribeMC() {
     let subscription = subscribe(this.messageContext, BOATMC, (message) => { this.boatId = message.recordId }, { scope: APPLICATION_SCOPE });
